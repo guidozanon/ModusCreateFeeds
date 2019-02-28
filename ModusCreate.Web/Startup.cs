@@ -1,10 +1,13 @@
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ModusCreate.Core;
+using ModusCreate.Web.Infrastructure;
 
 namespace ModusCreate.Web
 {
@@ -20,13 +23,26 @@ namespace ModusCreate.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddOData();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddCoreRegistry(Configuration.GetConnectionString("NewsFeedDatabase"));
+            services.AddWebApiRegistry(Configuration);
+            services.ConfigureIdentity();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer();
+
+            services.AddMvc(options =>
+            {
+                options.EnableEndpointRouting = false;
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,15 +59,18 @@ namespace ModusCreate.Web
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            app.RunInstallers();
+
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
+            app.UseAuthentication();
+            app.UseCors();
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                routes.Select().Expand().Filter().OrderBy().MaxTop(50).Count();
+                routes.MapODataServiceRoute("odata", "odata", ODataRegistry.GetEdmModel());
             });
 
             app.UseSpa(spa =>
