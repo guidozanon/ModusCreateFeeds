@@ -8,4 +8,4 @@
 4. Nodejs 10.15.2
 
 ## How to run
-Just clone the repo and press F5. :)
+Just clone the repo, open the solution with VS2017 and press F5. :)
