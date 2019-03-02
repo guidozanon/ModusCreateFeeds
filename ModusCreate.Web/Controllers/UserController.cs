@@ -28,7 +28,7 @@ namespace ModusCreate.Web.Controllers
             _jwtTokenGenerator = jwtTokenGenerator;
         }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         public async Task<IActionResult> Signup(SignupModel signup)
         {
             if (ModelState.IsValid)

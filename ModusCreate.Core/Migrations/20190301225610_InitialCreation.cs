@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ModusCreate.Core.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialCreation : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -200,8 +200,7 @@ namespace ModusCreate.Core.Migrations
                     CategoryId = table.Column<int>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    DeletedOn = table.Column<DateTime>(nullable: false),
-                    UserEntityId = table.Column<string>(nullable: true)
+                    DeletedOn = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -210,12 +209,6 @@ namespace ModusCreate.Core.Migrations
                         name: "FK_Feeds_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Feeds_AspNetUsers_UserEntityId",
-                        column: x => x.UserEntityId,
-                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -229,17 +222,41 @@ namespace ModusCreate.Core.Migrations
                     Body = table.Column<string>(nullable: true),
                     Tags = table.Column<string>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
-                    FeedEntityId = table.Column<Guid>(nullable: true)
+                    FeedId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_News", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_News_Feeds_FeedEntityId",
-                        column: x => x.FeedEntityId,
+                        name: "FK_News_Feeds_FeedId",
+                        column: x => x.FeedId,
                         principalTable: "Feeds",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Subscriptions",
+                columns: table => new
+                {
+                    FeedId = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subscriptions", x => new { x.UserId, x.FeedId });
+                    table.ForeignKey(
+                        name: "FK_Subscriptions_Feeds_FeedId",
+                        column: x => x.FeedId,
+                        principalTable: "Feeds",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Subscriptions_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -287,14 +304,14 @@ namespace ModusCreate.Core.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Feeds_UserEntityId",
-                table: "Feeds",
-                column: "UserEntityId");
+                name: "IX_News_FeedId",
+                table: "News",
+                column: "FeedId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_News_FeedEntityId",
-                table: "News",
-                column: "FeedEntityId");
+                name: "IX_Subscriptions_FeedId",
+                table: "Subscriptions",
+                column: "FeedId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserJwtTokens_UserId",
@@ -323,6 +340,9 @@ namespace ModusCreate.Core.Migrations
                 name: "News");
 
             migrationBuilder.DropTable(
+                name: "Subscriptions");
+
+            migrationBuilder.DropTable(
                 name: "UserJwtTokens");
 
             migrationBuilder.DropTable(
@@ -332,10 +352,10 @@ namespace ModusCreate.Core.Migrations
                 name: "Feeds");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Categories");
         }
     }
 }

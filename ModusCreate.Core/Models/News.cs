@@ -9,5 +9,6 @@ namespace ModusCreate.Core.Models
         public string Body { get; set; }
         public string Tags { get; set; }
         public DateTime CreatedOn { get; set; }
+        public string FeedName { get; set; }
     }
 }

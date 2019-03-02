@@ -1,0 +1,15 @@
+span.title{
+    font-size: 24px;
+    display: block;
+}
+
+.more-news{
+    text-align: center;
+    margin: auto;
+    margin-bottom: 20px;
+    display: block;
+}
+
+a.subscribe{
+    float: right;
+}

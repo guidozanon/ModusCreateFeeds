@@ -9,5 +9,7 @@ namespace ModusCreate.Core.DAL.Domain
         public string Body { get; set; }
         public string Tags { get; set; }
         public DateTime CreatedOn { get; set; }
+        public virtual FeedEntity Feed { get; set; }
+        public Guid FeedId { get; set; }
     }
 }

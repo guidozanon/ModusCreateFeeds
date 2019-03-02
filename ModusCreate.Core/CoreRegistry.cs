@@ -14,7 +14,10 @@ namespace ModusCreate.Core
         public static void AddCoreRegistry(this IServiceCollection services, string connString)
         {
             services.AddScoped<NewsFeedContext>();
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFeedsService, FeedService>();
+            services.AddScoped<IInternalUserService, UserService>();
+            services.AddScoped<IUserService>(x => x.GetRequiredService<IInternalUserService>());
+
 
             services.AddDbContext<NewsFeedContext>(options =>
                 options.UseSqlServer(connString)
@@ -25,6 +28,8 @@ namespace ModusCreate.Core
 
             services.AddScoped<IRepository<Feed>, Repository<FeedEntity, Feed>>();
             services.AddScoped<IRepository<News>, Repository<NewsEntity, News>>();
+
+
 
             services.Scan(scan => scan
                 .FromAssemblyOf<NewsFeedContext>()

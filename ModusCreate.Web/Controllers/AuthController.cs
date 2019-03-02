@@ -25,7 +25,7 @@ namespace ModusCreate.Web.Controllers
             _userService = userService;
         }
 
-        [HttpPost]
+        [HttpPost("[action]")]
         public async Task<IActionResult> Login(LoginModel login)
         {
             if (ModelState.IsValid)

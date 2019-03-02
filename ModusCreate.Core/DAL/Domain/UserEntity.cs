@@ -9,6 +9,6 @@ namespace ModusCreate.Core.DAL.Domain
     {
         public string Name { get; set; }
         public string AvatarUrl { get; set; }
-        public virtual ICollection<FeedEntity> Feeds { get; set; }
+        public virtual ICollection<SubscriptionEntity> Subscriptions { get; set; }
     }
 }

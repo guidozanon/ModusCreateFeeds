@@ -74,8 +74,8 @@ namespace ModusCreate.Core.Infrastructure
                 {
                     Category = category,
                     IsDeleted = false,
-                    Name = $"Feed {category} 1",
-                    Description = $"Feed {category} 1 Description",
+                    Name = $"Feed {category.Name} 1",
+                    Description = $"Feed {category.Name} 1 Description",
                     News = GenerateNews()
                 };
 
@@ -86,8 +86,8 @@ namespace ModusCreate.Core.Infrastructure
                     Category = category,
                     IsDeleted = false,
                     CreatedOn = DateTime.Today.AddYears(-1),
-                    Name = $"Feed {category} 2",
-                    Description = $"Feed {category} 2 Description",
+                    Name = $"Feed {category.Name} 2",
+                    Description = $"Feed {category.Name} 2 Description",
                     News = GenerateNews()
                 };
 
@@ -103,12 +103,10 @@ namespace ModusCreate.Core.Infrastructure
             {
                 result.Add(new NewsEntity
                 {
-                    Title = "Feriens quique cibi suisque admonita",
+                    Title = $"Feriens quique cibi suisque admonita {i}",
                     Tags = GetRandomTags(),
                     CreatedOn = new DateTime(2018, random.Next(1, 12), random.Next(1, 28)),
-                    Body = @"# Feriens quique cibi suisque admonita
-
-## Nemus siluere
+                    Body = @"## Nemus siluere
 
 Lorem markdownum, deploravit dextrum et [meorum perque
 urbis](http://tamen-simul.io/adcommodat.html) possederat corpore spargere non
@@ -148,7 +146,10 @@ coniugialia."
             for (int i = 0; i < count; i++)
             {
                 var index = random.Next(Tags.Length);
-                sb.Append($"{Tags[index]} ");
+                if (!sb.ToString().Contains(Tags[index]))
+                {
+                    sb.Append($"{Tags[index]} ");
+                }
             }
             return sb.ToString();
         }

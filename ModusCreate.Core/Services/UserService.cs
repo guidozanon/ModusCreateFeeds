@@ -10,6 +10,11 @@ using System.Threading.Tasks;
 
 namespace ModusCreate.Core.Services
 {
+    interface IInternalUserService : IUserService
+    {
+        UserEntity CurrentUserInternal { get; }
+    }
+
     public interface IUserService
     {
         User CurrentUser { get; }
@@ -30,7 +35,7 @@ namespace ModusCreate.Core.Services
         Task<SignInResult> CheckPasswordSignInAsync(User user, string password);
     }
 
-    class UserService : IUserService
+    class UserService : IInternalUserService
     {
         private readonly IMapper _mapper;
         private readonly NewsFeedContext _context;
@@ -38,7 +43,7 @@ namespace ModusCreate.Core.Services
         private readonly SignInManager<UserEntity> _signinManager;
 
         public User CurrentUser { get; private set; }
-        internal UserEntity CurrentUserInternal { get; private set; }
+        public UserEntity CurrentUserInternal { get; private set; }
 
         public UserService(NewsFeedContext context, IMapper mapper, UserManager<UserEntity> userManager, SignInManager<UserEntity> signinManager)
         {

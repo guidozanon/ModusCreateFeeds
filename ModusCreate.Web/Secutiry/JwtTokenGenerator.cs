@@ -30,6 +30,8 @@ namespace ModusCreate.Web.Secutiry
                             claims: new[]
                             {
                                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                                new Claim("Avatar", user.AvatarUrl),
+                                new Claim(JwtRegisteredClaimNames.GivenName, user.Name),
                                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                             },
                             expires: DateTime.UtcNow.AddHours(1),

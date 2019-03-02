@@ -10,8 +10,8 @@ using ModusCreate.Core.DAL;
 namespace ModusCreate.Core.Migrations
 {
     [DbContext(typeof(NewsFeedContext))]
-    [Migration("20190228161345_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20190301225610_InitialCreation")]
+    partial class InitialCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -167,13 +167,9 @@ namespace ModusCreate.Core.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("UserEntityId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserEntityId");
 
                     b.ToTable("Feeds");
                 });
@@ -187,7 +183,7 @@ namespace ModusCreate.Core.Migrations
 
                     b.Property<DateTime>("CreatedOn");
 
-                    b.Property<Guid?>("FeedEntityId");
+                    b.Property<Guid>("FeedId");
 
                     b.Property<string>("Tags");
 
@@ -195,9 +191,22 @@ namespace ModusCreate.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FeedEntityId");
+                    b.HasIndex("FeedId");
 
                     b.ToTable("News");
+                });
+
+            modelBuilder.Entity("ModusCreate.Core.DAL.Domain.SubscriptionEntity", b =>
+                {
+                    b.Property<string>("UserId");
+
+                    b.Property<Guid>("FeedId");
+
+                    b.HasKey("UserId", "FeedId");
+
+                    b.HasIndex("FeedId");
+
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("ModusCreate.Core.DAL.Domain.UserEntity", b =>
@@ -325,17 +334,27 @@ namespace ModusCreate.Core.Migrations
                     b.HasOne("ModusCreate.Core.DAL.Domain.FeedCategoryEntity", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
-
-                    b.HasOne("ModusCreate.Core.DAL.Domain.UserEntity")
-                        .WithMany("Feeds")
-                        .HasForeignKey("UserEntityId");
                 });
 
             modelBuilder.Entity("ModusCreate.Core.DAL.Domain.NewsEntity", b =>
                 {
-                    b.HasOne("ModusCreate.Core.DAL.Domain.FeedEntity")
+                    b.HasOne("ModusCreate.Core.DAL.Domain.FeedEntity", "Feed")
                         .WithMany("News")
-                        .HasForeignKey("FeedEntityId");
+                        .HasForeignKey("FeedId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ModusCreate.Core.DAL.Domain.SubscriptionEntity", b =>
+                {
+                    b.HasOne("ModusCreate.Core.DAL.Domain.FeedEntity", "Feed")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("FeedId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ModusCreate.Core.DAL.Domain.UserEntity", "User")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ModusCreate.Core.DAL.Domain.UserTokenEntity", b =>

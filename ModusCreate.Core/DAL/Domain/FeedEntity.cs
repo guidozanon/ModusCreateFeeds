@@ -14,5 +14,6 @@ namespace ModusCreate.Core.DAL.Domain
         public DateTime DeletedOn { get; set; }
 
         public virtual ICollection<NewsEntity> News { get; set; }
+        public virtual ICollection<SubscriptionEntity> Subscriptions { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using ModusCreate.Core.Models;
+using ModusCreate.Web.Models;
 
 namespace ModusCreate.Web
 {
@@ -6,6 +8,8 @@ namespace ModusCreate.Web
     {
         public WebApiMappingProfile()
         {
+            CreateMap<SignupModel, User>()
+                .ForMember(x => x.UserName, c => c.MapFrom(x => x.Email));
 
         }
     }
