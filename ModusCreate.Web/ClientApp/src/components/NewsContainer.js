@@ -6,7 +6,7 @@ export default class NewsContainer extends React.Component{
 
     renderEmpty(){
         return (
-            <p>Seems that there are no news to show!</p>
+            <p>{this.props.noNewsMessage || "Seems that there are no news to show!"}</p>
         );
     }
 

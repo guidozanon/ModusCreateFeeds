@@ -1,5 +1,5 @@
-import jwt_decode from 'jwt-decode';
 import AuthService from '../services/AuthService';
+import history from '../services/History';
 
 const requestLogin = 'REQUEST_LOGIN';
 const receiveLogin = 'RECEIVE_LOGIN';
@@ -24,6 +24,9 @@ export const actionCreators = {
 
       const user = AuthService.getUser();
       dispatch({ type: receiveLogin, user });
+
+      history.push('/');
+
     }catch(error){
       dispatch({ type: receiveLoginError, error });
     }
@@ -32,24 +35,15 @@ export const actionCreators = {
   requestRegister: (name, email, password) => async (dispatch, getState) => {
     dispatch({ type: requestRegister, email, password });
 
-    const url = 'api/user/signup';
-    const response = await fetch(url, {
-        method:'post',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({name:name, email: email, password:password})
-    });
+    try{
+      debugger;
+      await AuthService.register(name, email, password);
 
-    if (response.ok){
-      const token = await response.json();
-      const tokenInfo = jwt_decode(token);
-      const user = {...tokenInfo, token:token};
-
+      const user = AuthService.getUser();
       dispatch({ type: receiveRegister, user });
-    }else{
-      const error = response.statusText;
+
+      history.push('/');
+    }catch(error){
       dispatch({ type: registerError,  error});
     }
   },
@@ -92,7 +86,8 @@ export const reducer = (state, action) => {
     return {
       ...state,
       isLoading: false,
-      showLogin: false
+      showLogin: false,
+      loginErr: null
     };
   }
 
@@ -134,6 +129,14 @@ export const reducer = (state, action) => {
       isLoading: false
     };
   }
+  if (action.type === registerError) {
+    return {
+      ...state,
+      user: null,
+      registerErr: action.error
+    };
+  }
+  
 
   return state;
 };

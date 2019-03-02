@@ -13,26 +13,36 @@ class HomePage extends Component{
     this.props.requestMyNews(this.props.feeds.myfeeds.nextLink);
   }
 
-  componentDidMount(){
-    if (this.props.feeds.myfeeds.news.length === 0 && this.props.feeds.myfeeds.loading === false && AuthService.isAuthenticated()){
+  componentDidUpdate(){
+    if (this.props.feeds.myfeeds.news.length === 0 && this.props.feeds.myfeeds.loading === false && AuthService.isAuthenticated() && this.props.feeds.myfeeds.newscount == undefined){
       this.ensureNewsDataFetched();
     }
   }
 
-renderNews(){
+  componentDidMount(){
+    if (this.props.feeds.myfeeds.news.length === 0 && this.props.feeds.myfeeds.loading === false && AuthService.isAuthenticated() && this.props.feeds.myfeeds.newscount == undefined){
+      this.ensureNewsDataFetched();
+    }
+  }
 
-  return(
-    <div>
-      {this.props.feeds.myfeeds.loading === true && this.props.feeds.myfeeds.news.length === 0?
-          <h3>loading news...</h3> :
-          <div>
-          <h1>Your Subscription News!</h1>
-          <NewsContainer newscount={this.props.feeds.myfeeds.newscount} news={this.props.feeds.myfeeds.news} ensureDataFetched={() => this.ensureNewsDataFetched()}></NewsContainer>
-          </div>
-      }
-  </div>
-  );
-}
+  renderNews(){
+    return(
+      <div>
+        {this.props.feeds.myfeeds.loading === true && this.props.feeds.myfeeds.news.length === 0?
+            <h3>loading news...</h3> :
+            <div>
+            <h1>Your Subscription News!</h1>
+            <NewsContainer 
+              newscount={this.props.feeds.myfeeds.newscount} 
+              news={this.props.feeds.myfeeds.news} 
+              ensureDataFetched={() => this.ensureNewsDataFetched()}
+              noNewsMessage='Seems that there are no news to show. Go to the Feeds Page and make sure to subscribe at least to one Feed to get News on your NewsFeed!'
+            ></NewsContainer>
+            </div>
+        }
+    </div>
+    );
+  }
 
 renderAnonimousHome(){
   return (

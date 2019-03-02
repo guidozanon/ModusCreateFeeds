@@ -29,25 +29,53 @@ class Auth{
         }else{
             throw (await response.text());
         }
-      }
+    }
 
-      logoff(){
+    async register(name, email, password){
+        if (this.isAuthenticated()){
+            return;
+        }
+
+        const url = 'api/user/signup';
+
+        const response = await fetch(url, {
+            method:'post',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name:name, email: email, password:password})
+        });
+
+        if (response.ok){
+            const token = await response.json();
+            const tokenInfo = jwt_decode(token.jwt);
+            this.user = {...tokenInfo, token:token};
+
+            localStorage.setItem('user', JSON.stringify(this.user));
+        
+        }else{
+            throw (await response.text());
+        }
+    }
+
+    logoff(){
         localStorage.removeItem('user');
         this.user = null;
-      }
+    }
       
-      isAuthenticated(){
-          return (this.getUser()!= null);
-      }
+    isAuthenticated(){
+        return (this.getUser()!= null);
+    }
 
-      isExpired(user){
-        const d = new Date(0);
-        d.setUTCSeconds(user.exp);
+    isExpired(user){
+    const d = new Date(0);
+    d.setUTCSeconds(user.exp);
 
-        return d <= new Date();
-      }
+    return d <= new Date();
+    }
 
-      getUser(){
+    getUser(){
         if (this.user == null){
             const user = localStorage.getItem('user');
             if (user != null)
@@ -60,7 +88,7 @@ class Auth{
         }
 
         return this.user;
-      }
+    }
 }
 
 const AuthService = new Auth();

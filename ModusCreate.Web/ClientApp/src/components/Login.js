@@ -57,7 +57,7 @@ class Login extends Component{
                     </div>
 
                     {this.props.loginErr != null ?
-                    <p style={{color:'red'}}>{this.props.loginErr}</p> : <span></span>}
+                    <p className='alert alert-danger'>{this.props.loginErr}</p> : <span></span>}
                     {this.props.isloading ? 
                         <a href='javascript:void(0);' disabled >Login</a> :
                         <a href='javascript:void(0);'  onClick={ () => this.props.requestLogin(this.state.email, this.state.password) }>Login</a> }
